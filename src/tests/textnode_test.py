@@ -2,6 +2,7 @@ import unittest
 
 from src.textnode import TextNode
 
+
 class TestTextNode(unittest.TestCase):
     def test_equality(self):
         node_1 = TextNode("Hello World", "link", "https://www.google.com")
@@ -18,7 +19,9 @@ class TestTextNode(unittest.TestCase):
     def test_repr(self):
         node_1 = TextNode("Hello World", "code", "https://www.google.com")
 
-        self.assertEqual(node_1.__repr__(), "TextNode(Hello World, code, https://www.google.com)")
+        self.assertEqual(
+            node_1.__repr__(), "TextNode(Hello World, code, https://www.google.com)"
+        )
 
     def test_text_node_to_html_text(self):
         node_text = TextNode("Hello World", "text")
@@ -30,7 +33,10 @@ class TestTextNode(unittest.TestCase):
 
     def test_text_node_to_html_link(self):
         node_link = TextNode("Click here", "link", "https://www.example.com")
-        self.assertEqual(node_link.text_node_to_html().to_html(), "<a href='https://www.example.com'>Click here</a>")
+        self.assertEqual(
+            node_link.text_node_to_html().to_html(),
+            "<a href='https://www.example.com'>Click here</a>",
+        )
 
     def test_unsupported_text_type(self):
         with self.assertRaises(Exception):
@@ -38,16 +44,20 @@ class TestTextNode(unittest.TestCase):
 
     def test_link_node_with_none_url(self):
         node_link = TextNode("Click here", "link", None)
-        self.assertEqual(node_link.text_node_to_html().to_html(), "<a href='#'>Click here</a>")
+        self.assertEqual(
+            node_link.text_node_to_html().to_html(), "<a href='#'>Click here</a>"
+        )
 
     def test_image_node_with_none_url(self):
         node_image = TextNode("Image", "image", None)
-        self.assertEqual(node_image.text_node_to_html().to_html(), "<img alt='Image' />")
+        self.assertEqual(
+            node_image.text_node_to_html().to_html(), "<img alt='Image' />"
+        )
 
     def test_empty_text(self):
         node_text = TextNode("", "text")
         self.assertEqual(node_text.text_node_to_html().to_html(), "")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
