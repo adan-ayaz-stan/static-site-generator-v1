@@ -49,29 +49,3 @@ class TextNode:
             if self.url is None:
                 return LeafNode(None, "img", None, {"alt": self.text})
             return LeafNode(None, "img", None, {"src": self.url, "alt": self.text})
-
-
-"""
-Input:
-node = TextNode("This is text with a `code block` word", text_type_text)
-new_nodes = split_nodes_delimiter([node], "`", text_type_code)
-
-Output:
-new_nodes = [
-    TextNode("This is text with a ", text_type_text),
-    TextNode("code block", text_type_code),
-    TextNode(" word", text_type_text),
-]
-"""
-
-
-def split_nodes_delimiter(old_nodes, delimiter, text_type):
-    tmp_nodes = []
-    for node in old_nodes:
-        text = node.text
-        if delimiter in text:
-            tmp_nodes.append(TextNode(text[: text.find(delimiter)], text_type))
-            tmp_nodes.append(TextNode(text[text.find(delimiter) + 1 :], text_type))
-        else:
-            tmp_nodes.append(node)
-    return tmp_nodes
