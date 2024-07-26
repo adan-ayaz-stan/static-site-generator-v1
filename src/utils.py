@@ -56,87 +56,76 @@ def extract_markdown_links(text):
 
 # Split nodes image
 def split_nodes_image(old_nodes):
-    tmp_nodes = []
+    """
+    Split nodes into text and image nodes.
+
+    Args:
+        old_nodes (list): List of nodes to be split.
+
+    Returns:
+        list: List of split nodes.
+    """
+    new_nodes = []
     for node in old_nodes:
         text = node.text
-
-        img_nodes = []
-        # Extract image nodes
         images = extract_markdown_images(text)
+
+        if not images:
+            new_nodes.append(node)
+            continue
+
+        remaining_text = text
+        last_index = 0
         for image in images:
-            # Construct temp string and replace it with a tombstone marker
-            tmp_str = text.replace(f"![{image[0]}]({image[1]})", "__image_")
-            text = tmp_str
+            image_tag = f"![{image[0]}]({image[1]})"
+            index = remaining_text.find(image_tag)
+            if index != -1:
+                new_nodes.append(TextNode(remaining_text[last_index:index], "text"))
+                new_nodes.append(TextNode(image[0], "image", image[1]))
+                last_index = index + len(image_tag)
 
-            img_nodes.append(TextNode(image[0], "image", image[1]))
+        # Add the remaining text after the last image, only if it's not empty
+        remaining_text_after_last_image = remaining_text[last_index:]
+        if remaining_text_after_last_image.strip():
+            new_nodes.append(TextNode(remaining_text_after_last_image, "text"))
 
-        # Add in the image nodes at the markers
-        split_string = text.split("__image_")
-
-        text_nodes = []
-        for txt in split_string:
-            text_nodes.append(TextNode(txt, "text"))
-
-        # Take first text node - index 0
-        # Add the first image after that - index 1
-        # Take the second text node - previously index 1, becomes index 2
-        # Add the second image after that - index 3
-        # Take the third text node - previously index 2, becomes index 4
-        # Add the third image after that - index 5
-        """
-        Order of text nodes: 0, 2, 4, 6, 8, 10
-        Order of image nodes: 1, 3, 5, 7, 9, 11
-        """
-
-        for i in range(len(img_nodes)):
-            tmp_nodes.append(text_nodes[i])
-            tmp_nodes.append(img_nodes[i])
-
-            if i == len(img_nodes):
-                tmp_nodes.append(text_nodes[i + 1 :])
-
-    return tmp_nodes
+    return new_nodes
 
 
 # Split nodes link
 def split_nodes_link(old_nodes):
+    """
+    Split nodes into text and link nodes.
+
+    Args:
+        old_nodes (list): List of nodes to be split.
+
+    Returns:
+        list: List of split nodes.
+    """
+    
     tmp_nodes = []
     for node in old_nodes:
         text = node.text
-
-        img_nodes = []
-        # Extract image nodes
         links = extract_markdown_links(text)
+        
+        if not links:
+            tmp_nodes.append(node)
+            continue
+        
+        remaining_text = text
+        last_index = 0
         for link in links:
-            # Construct temp string and replace it with a tombstone marker
-            tmp_str = text.replace(f"[{link[0]}]({link[1]})", "__link_")
-            text = tmp_str
-
-            img_nodes.append(TextNode(link[0], "link", link[1]))
-
-        # Add in the image nodes at the markers
-        split_string = text.split("__link_")
-
-        text_nodes = []
-        for txt in split_string:
-            text_nodes.append(TextNode(txt, "text"))
-
-        # Take first text node - index 0
-        # Add the first link after that - index 1
-        # Take the second text node - previously index 1, becomes index 2
-        # Add the second link after that - index 3
-        # Take the third text node - previously index 2, becomes index 4
-        # Add the third link after that - index 5
-        """
-        Order of text nodes: 0, 2, 4, 6, 8, 10
-        Order of image nodes: 1, 3, 5, 7, 9, 11
-        """
-
-        for i in range(len(img_nodes)):
-            tmp_nodes.append(text_nodes[i])
-            tmp_nodes.append(img_nodes[i])
-
-            if i == len(img_nodes):
-                tmp_nodes.append(text_nodes[i + 1 :])
+            link_tag = f"[{link[0]}]({link[1]})"
+            index = remaining_text.find(link_tag)
+            if index != -1:
+                tmp_nodes.append(TextNode(remaining_text[last_index:index], "text"))
+                tmp_nodes.append(TextNode(link[0], "link", link[1]))
+                last_index = index + len(link_tag)
+        
+        # Add the remaining text after the last link, only if it's not empty
+        remaining_text_after_last_link = remaining_text[last_index:]
+        if remaining_text_after_last_link.strip():
+            tmp_nodes.append(TextNode(remaining_text_after_last_link, "text"))
 
     return tmp_nodes

@@ -96,7 +96,7 @@ class UtilsTest(unittest.TestCase):
         ]
         self.assertEqual(extract_markdown_links(text), expected_output)
 
-    # Split Nodes Image
+    # SPLIT NODES IMAGE TESTS:
     def test_split_nodes_image(self):
         node = TextNode(
             "This is text with an image ![to boot dev](https://www.boot.dev) and ![to youtube](https://www.youtube.com/@bootdotdev)",
@@ -110,7 +110,55 @@ class UtilsTest(unittest.TestCase):
             TextNode(" and ", "text"),
             TextNode("to youtube", "image", "https://www.youtube.com/@bootdotdev"),
         ]
+
         self.assertEqual(new_nodes, expected_output)
+
+    def test_no_images(self):
+        # Test case where there are no images in the text
+        old_nodes = [TextNode("Hello World", "text")]
+        expected_output = old_nodes
+        self.assertEqual(split_nodes_image(old_nodes), expected_output)
+
+    def test_single_image(self):
+        # Test case where there is a single image in the text
+        old_nodes = [TextNode("Hello ![image](url) World", "text")]
+        expected_output = [
+            TextNode("Hello ", "text"),
+            TextNode("image", "image", "url"),
+            TextNode(" World", "text"),
+        ]
+
+        self.assertEqual(split_nodes_image(old_nodes), expected_output)
+
+    def test_multiple_images(self):
+        # Test case where there are multiple images in the text
+        old_nodes = [TextNode("Hello ![image1](url1) World ![image2](url2)", "text")]
+        expected_output = [
+            TextNode("Hello ", "text"),
+            TextNode("image1", "image", "url1"),
+            TextNode(" World ", "text"),
+            TextNode("image2", "image", "url2"),
+        ]
+        self.assertEqual(split_nodes_image(old_nodes), expected_output)
+
+    def test_consecutive_images(self):
+        # Test case where there are consecutive images in the text
+        old_nodes = [TextNode("Hello ![image1](url1) ![image2](url2) World", "text")]
+        expected_output = [
+            TextNode("Hello ", "text"),
+            TextNode("image1", "image", "url1"),
+            TextNode(" ", "text"),
+            TextNode("image2", "image", "url2"),
+            TextNode(" World", "text"),
+        ]
+
+        self.assertEqual(split_nodes_image(old_nodes), expected_output)
+
+    def test_empty_text(self):
+        # Test case where the text is empty
+        old_nodes = [TextNode("", "text")]
+        expected_output = old_nodes
+        self.assertEqual(split_nodes_image(old_nodes), expected_output)
 
     # SPLIT NODES LINK TESTS:
 
@@ -128,3 +176,21 @@ class UtilsTest(unittest.TestCase):
             TextNode("to youtube", "link", "https://www.youtube.com/@bootdotdev"),
         ]
         self.assertEqual(new_nodes, expected_output)
+
+    # MULTI INLINE TESTS:
+    def test_multi_link_and_images(self):
+        node = TextNode(
+            "This is text with an image ![to boot dev](https://www.boot.dev) and ![to youtube](https://www.youtube.com/@bootdotdev) and a link [to boot dev](https://www.boot.dev)",
+            "text",
+        )
+
+        expected_output = [
+            TextNode("This is text with an image ", "text"),
+            TextNode("to boot dev", "image", "https://www.boot.dev"),
+            TextNode(" and ", "text"),
+            TextNode("to youtube", "image", "https://www.youtube.com/@bootdotdev"),
+            TextNode(" and a link ", "text"),
+            TextNode("to boot dev", "link", "https://www.boot.dev"),
+        ]
+
+        self.assertEqual(split_nodes_link(split_nodes_image([node])), expected_output)
