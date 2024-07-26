@@ -12,34 +12,6 @@ from src.utils import (
 
 class UtilsTest(unittest.TestCase):
 
-    # SPLIT NODES DELIMITER TESTS
-    def test_split_nodes_delimiter_code_blocks(self):
-        node_text = TextNode("This is text with a `code block` inbetween.", "text")
-        self.assertEqual(
-            split_nodes_delimiter([node_text], "`", "code"),
-            [
-                TextNode("This is text with a ", "text"),
-                TextNode("code block", "code"),
-                TextNode(" inbetween.", "text"),
-            ],
-        )
-
-    def test_split_nodes_delimiter_multiple_nests(self):
-        node_text = TextNode(
-            "This is text with two `code block 1` and `code block 2` inbetween.", "text"
-        )
-
-        self.assertEqual(
-            split_nodes_delimiter([node_text], "`", "code"),
-            [
-                TextNode("This is text with two ", "text"),
-                TextNode("code block 1", "code"),
-                TextNode(" and ", "text"),
-                TextNode("code block 2", "code"),
-                TextNode(" inbetween.", "text"),
-            ],
-        )
-
     # EXTRACT MARKDOWN IMAGES TESTS
     def test_extract_markdown_images_test_1(self):
         text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpg)"
@@ -194,3 +166,83 @@ class UtilsTest(unittest.TestCase):
         ]
 
         self.assertEqual(split_nodes_link(split_nodes_image([node])), expected_output)
+
+
+class UnitTestSplitNodesDelimiter(unittest.TestCase):
+    # SPLIT NODES DELIMITER TESTS
+    def test_split_nodes_delimiter_code_blocks(self):
+        node_text = TextNode("This is text with a `code block` inbetween.", "text")
+        self.assertEqual(
+            split_nodes_delimiter([node_text], "`", "code"),
+            [
+                TextNode("This is text with a ", "text"),
+                TextNode("code block", "code"),
+                TextNode(" inbetween.", "text"),
+            ],
+        )
+
+    def test_split_nodes_delimiter_multiple_nests(self):
+        node_text = TextNode(
+            "This is text with two `code block 1` and `code block 2` inbetween.", "text"
+        )
+
+        self.assertEqual(
+            split_nodes_delimiter([node_text], "`", "code"),
+            [
+                TextNode("This is text with two ", "text"),
+                TextNode("code block 1", "code"),
+                TextNode(" and ", "text"),
+                TextNode("code block 2", "code"),
+                TextNode(" inbetween.", "text"),
+            ],
+        )
+
+    def test_code_delimiter(self):
+        node_text = TextNode("This is text with a `code block` inbetween.", "text")
+        self.assertEqual(
+            split_nodes_delimiter([node_text], "`", "code"),
+            [
+                TextNode("This is text with a ", "text"),
+                TextNode("code block", "code"),
+                TextNode(" inbetween.", "text"),
+            ],
+        )
+
+    def test_bold_delimiter(self):
+        node_text = TextNode("This is text with a **bold text** inbetween.", "text")
+        self.assertEqual(
+            split_nodes_delimiter([node_text], "**", "bold"),
+            [
+                TextNode("This is text with a ", "text"),
+                TextNode("bold text", "bold"),
+                TextNode(" inbetween.", "text"),
+            ],
+        )
+
+    def test_italic_delimiter(self):
+        node_text = TextNode("This is text with a *italic text* inbetween.", "text")
+        self.assertEqual(
+            split_nodes_delimiter([node_text], "*", "italic"),
+            [
+                TextNode("This is text with a ", "text"),
+                TextNode("italic text", "italic"),
+                TextNode(" inbetween.", "text"),
+            ],
+        )
+
+    def test_italic_bold_delimiter(self):
+        node_text = TextNode(
+            "This is text with a *italic* **bold text** inbetween.", "text"
+        )
+        self.assertEqual(
+            split_nodes_delimiter(
+                split_nodes_delimiter([node_text], "**", "bold"), "*", "italic"
+            ),
+            [
+                TextNode("This is text with a ", "text"),
+                TextNode("italic", "italic"),
+                TextNode(" ", "text"),
+                TextNode("bold text", "bold"),
+                TextNode(" inbetween.", "text"),
+            ],
+        )

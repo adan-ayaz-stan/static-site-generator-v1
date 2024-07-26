@@ -17,25 +17,46 @@ new_nodes = [
 
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
-    tmp_nodes = []
-    for node in old_nodes:
-        text = node.text
-        if delimiter in text:
-            split_txt = text.split(delimiter)
+    """
+    Split text nodes in a list of nodes based on a delimiter and text type.
 
-            for i in range(len(split_txt)):
-                if i == 0:
-                    tmp_nodes.append(TextNode(split_txt[i], "text"))
-                elif i == len(split_txt) - 1:
-                    tmp_nodes.append(TextNode(split_txt[i], "text"))
-                else:
-                    if i % 2 == 0:
-                        tmp_nodes.append(TextNode(split_txt[i], "text"))
-                    else:
-                        tmp_nodes.append(TextNode(split_txt[i], text_type))
+    Args:
+        old_nodes (list): List of nodes to process.
+        delimiter (str): Delimiter to split text nodes on.
+        text_type (str): Text type to assign to new nodes.
+
+    Returns:
+        list: New list of nodes with text nodes split based on delimiter.
+    """
+    new_nodes = []
+    temp_text = ""
+    for node in old_nodes:
+        if node.text_type == "text":
+            temp_text += node.text
         else:
-            tmp_nodes.append(node)
-    return tmp_nodes
+            if temp_text:
+                # Split text node into multiple nodes based on delimiter
+                text_parts = temp_text.split(delimiter)
+                for i, part in enumerate(text_parts):
+                    if i % 2 == 0:
+                        # Even parts are regular text
+                        new_nodes.append(TextNode(part, "text"))
+                    else:
+                        # Odd parts are code/bold/italic text
+                        new_nodes.append(TextNode(part, text_type))
+                temp_text = ""
+            new_nodes.append(node)
+    if temp_text:
+        # Split text node into multiple nodes based on delimiter
+        text_parts = temp_text.split(delimiter)
+        for i, part in enumerate(text_parts):
+            if i % 2 == 0:
+                # Even parts are regular text
+                new_nodes.append(TextNode(part, "text"))
+            else:
+                # Odd parts are code/bold/italic text
+                new_nodes.append(TextNode(part, text_type))
+    return new_nodes
 
 
 # Create a function extract_markdown_images(text) that takes raw markdown text and returns a list of tuples. Each tuple should contain the alt text and the URL of any markdown images.
@@ -103,16 +124,16 @@ def split_nodes_link(old_nodes):
     Returns:
         list: List of split nodes.
     """
-    
+
     tmp_nodes = []
     for node in old_nodes:
         text = node.text
         links = extract_markdown_links(text)
-        
+
         if not links:
             tmp_nodes.append(node)
             continue
-        
+
         remaining_text = text
         last_index = 0
         for link in links:
@@ -122,7 +143,7 @@ def split_nodes_link(old_nodes):
                 tmp_nodes.append(TextNode(remaining_text[last_index:index], "text"))
                 tmp_nodes.append(TextNode(link[0], "link", link[1]))
                 last_index = index + len(link_tag)
-        
+
         # Add the remaining text after the last link, only if it's not empty
         remaining_text_after_last_link = remaining_text[last_index:]
         if remaining_text_after_last_link.strip():
