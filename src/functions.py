@@ -139,6 +139,6 @@ def generate_page(from_path, template_path, dest_path):
     print("Generated page title: ", title)
 
     file_with_title = template_file.replace("{{ Title }}", title)
-    file_with_content = template_file.replace("{{ Content }}", html_from_md)
+    file_with_content = file_with_title.replace("{{ Content }}", html_from_md)
 
     write_to_file(dest_path, file_with_content)

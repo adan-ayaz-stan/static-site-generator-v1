@@ -23,13 +23,18 @@ def generate_pages(src_content_path, dest_html_path, template_path):
     files_md = os.listdir(src_content_path)
     for filename in files_md:
         src_md_path = os.path.join(src_content_path, filename)
-        dest_html_path = os.path.join(
+        dest_html_page = os.path.join(
             dest_html_path, "\n".join(filename.split(".")[:-1]) + ".html"
         )
         if os.path.isdir(src_md_path):
-            generate_pages(src_md_path)
+            dest_dir = os.path.join(dest_html_path, filename)
+
+            if not os.path.exists(dest_dir):
+                os.mkdir(dest_dir)
+
+            generate_pages(src_md_path, dest_dir, template_path)
         else:
-            generate_page(src_md_path, template_path, dest_html_path)
+            generate_page(src_md_path, template_path, dest_html_page)
 
 
 def main():
