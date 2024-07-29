@@ -1,4 +1,4 @@
-from src.htmlnode import HTMLNode, LeafNode, ParentNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
 
 
 # Create a class for text nodes
@@ -31,10 +31,10 @@ class TextNode:
             return LeafNode(self.text).to_html()
 
         if self.text_type == "bold":
-            return LeafNode(self.text, "b").to_html()
+            return LeafNode(self.text, "strong").to_html()
 
         if self.text_type == "italic":
-            return LeafNode(self.text, "i").to_html()
+            return LeafNode(self.text, "em").to_html()
 
         if self.text_type == "code":
             return LeafNode(self.text, "code").to_html()

@@ -252,44 +252,72 @@ class UnitTestSplitNodesDelimiter(unittest.TestCase):
 class BlockToBlockTypeTest(unittest.TestCase):
     def test_seq_h1(self):
         block = "# This is a heading"
-        self.assertEqual(block_to_block_type(block), "h1")
+        self.assertEqual(block_to_block_type(block), ("h1", "This is a heading"))
 
     def test_seq_h2(self):
         block = "## This is a subheading"
-        self.assertEqual(block_to_block_type(block), "h2")
+        self.assertEqual(block_to_block_type(block), ("h2", "This is a subheading"))
 
     def test_seq_h3(self):
         block = "### This is a subsubheading"
-        self.assertEqual(block_to_block_type(block), "h3")
+        self.assertEqual(block_to_block_type(block), ("h3", "This is a subsubheading"))
 
     def test_seq_h4(self):
         block = "#### This is a subsubsubheading"
-        self.assertEqual(block_to_block_type(block), "h4")
+        self.assertEqual(
+            block_to_block_type(block), ("h4", "This is a subsubsubheading")
+        )
 
     def test_seq_h5(self):
         block = "##### This is a subsubsubsubheading"
-        self.assertEqual(block_to_block_type(block), "h5")
+        self.assertEqual(
+            block_to_block_type(block), ("h5", "This is a subsubsubsubheading")
+        )
 
     def test_seq_h6(self):
         block = "###### This is a subsubsubsubsubheading"
-        self.assertEqual(block_to_block_type(block), "h6")
+        self.assertEqual(
+            block_to_block_type(block), ("h6", "This is a subsubsubsubsubheading")
+        )
 
     def test_seq_ol(self):
         block = "1. This is an ordered list\n2. This is a list item\n3. This is another list item"
-        self.assertEqual(block_to_block_type(block), "ol")
+        self.assertEqual(
+            block_to_block_type(block),
+            (
+                "ol",
+                [
+                    "This is an ordered list",
+                    "This is a list item",
+                    "This is another list item",
+                ],
+            ),
+        )
 
     def test_seq_ul(self):
         block = "- This is an unordered list\n- This is a list item\n- This is another list item"
-        self.assertEqual(block_to_block_type(block), "ul")
+        self.assertEqual(
+            block_to_block_type(block),
+            (
+                "ul",
+                [
+                    "This is an unordered list",
+                    "This is a list item",
+                    "This is another list item",
+                ],
+            ),
+        )
 
     def test_seq_blockquote(self):
         block = "> This is a blockquote"
-        self.assertEqual(block_to_block_type(block), "blockquote")
+        self.assertEqual(
+            block_to_block_type(block), ("blockquote", "This is a blockquote")
+        )
 
     def test_seq_code(self):
         block = "```\nThis is a code block\n```"
-        self.assertEqual(block_to_block_type(block), "code")
+        self.assertEqual(block_to_block_type(block), ("code", "This is a code block"))
 
     def test_seq_p(self):
         block = "This is a paragraph"
-        self.assertEqual(block_to_block_type(block), "p")
+        self.assertEqual(block_to_block_type(block), ("p", "This is a paragraph"))

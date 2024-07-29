@@ -1,6 +1,6 @@
 import re
 
-from src.textnode import TextNode
+from textnode import TextNode
 
 """
 Input:
@@ -162,30 +162,37 @@ def block_to_block_type(block):
             hash_chars += 1
 
     if hash_chars == len(split_string_h_check[0]):
-        return f"h{hash_chars}"
+        # trim the rest of the string and also return it
+
+        return (f"h{hash_chars}", split_string_h_check[1].strip())
 
     # Ordered List
-    split_string_ol_check = block.split(".", 1)
-    if (
-        len(split_string_ol_check) == 2
-        and split_string_ol_check[0].isdigit()
-        and split_string_ol_check[1][0] == " "
-    ):
-        return "ol"
+    pattern = r"^\d+\..*$"
+    list_items = re.findall(pattern, block, re.MULTILINE)
+    if list_items:
+        # Remove the number from the list items
+        list_items = [item[2:].strip() for item in list_items]
+        return ("ol", list_items)
 
     # Unordered list block
-    if block[0] == "*" or block[0] == "-":
-        return "ul"
+    pattern = r"^[\*-].*$"
+    list_items = re.findall(pattern, block, re.MULTILINE)
+    if list_items:
+        # Remove * or - from the list items
+        list_items = [
+            item[1:].strip() if item[0] in ["*", "-"] else item for item in list_items
+        ]
+        return ("ul", list_items)
 
     # Blockqoute Block
     if block[:1] == ">":
-        return "blockquote"
+        return ("blockquote", block[1:].strip())
 
     # Code Block
     if (block[:3] == "```" and block[-3:] == "```") or (
         block[:3] == "~~~" and block[-3:] == "~~~"
     ):
-        return "code"
+        return ("code", block[3:-3].strip())
 
     # Normal Paragraph
-    return "p"
+    return ("p", block.strip())

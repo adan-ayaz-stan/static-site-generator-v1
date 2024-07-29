@@ -30,7 +30,7 @@ class TestTextNode(unittest.TestCase):
 
     def test_to_html_bold(self):
         node_bold = TextNode("Bold Text", "bold")
-        self.assertEqual(node_bold.to_html(), "<b>Bold Text</b>")
+        self.assertEqual(node_bold.to_html(), "<strong>Bold Text</strong>")
 
     def test_to_html_link(self):
         node_link = TextNode("Click here", "link", "https://www.example.com")
@@ -45,15 +45,11 @@ class TestTextNode(unittest.TestCase):
 
     def test_link_node_with_none_url(self):
         node_link = TextNode("Click here", "link", None)
-        self.assertEqual(
-            node_link.to_html(), "<a href='#'>Click here</a>"
-        )
+        self.assertEqual(node_link.to_html(), "<a href='#'>Click here</a>")
 
     def test_image_node_with_none_url(self):
         node_image = TextNode("Image", "image", None)
-        self.assertEqual(
-            node_image.to_html(), "<img alt='Image' />"
-        )
+        self.assertEqual(node_image.to_html(), "<img alt='Image' />")
 
     def test_empty_text(self):
         node_text = TextNode("", "text")
