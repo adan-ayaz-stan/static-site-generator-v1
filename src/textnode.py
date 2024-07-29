@@ -24,28 +24,30 @@ class TextNode:
     def __repr__(self) -> str:
         return f"TextNode({self.text}, {self.text_type}, {self.url})"
 
-    def text_node_to_html(self):
+    def to_html(self):
         # We're raising exception by not allowing construction of a TextNode with an unsupported text type
 
         if self.text_type == "text":
-            return LeafNode(self.text)
+            return LeafNode(self.text).to_html()
 
         if self.text_type == "bold":
-            return LeafNode(self.text, "b")
+            return LeafNode(self.text, "b").to_html()
 
         if self.text_type == "italic":
-            return LeafNode(self.text, "i")
+            return LeafNode(self.text, "i").to_html()
 
         if self.text_type == "code":
-            return LeafNode(self.text, "code")
+            return LeafNode(self.text, "code").to_html()
 
         if self.text_type == "link":
             if self.url is None:
-                return LeafNode(self.text, "a", None, {"href": "#"})
+                return LeafNode(self.text, "a", None, {"href": "#"}).to_html()
 
-            return LeafNode(self.text, "a", None, {"href": self.url})
+            return LeafNode(self.text, "a", None, {"href": self.url}).to_html()
 
         if self.text_type == "image":
             if self.url is None:
-                return LeafNode(None, "img", None, {"alt": self.text})
-            return LeafNode(None, "img", None, {"src": self.url, "alt": self.text})
+                return LeafNode(None, "img", None, {"alt": self.text}).to_html()
+            return LeafNode(
+                None, "img", None, {"src": self.url, "alt": self.text}
+            ).to_html()

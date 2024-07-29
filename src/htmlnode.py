@@ -25,6 +25,18 @@ class HTMLNode:
 
 class ParentNode(HTMLNode):
     def __init__(self, children, tag, value=None, props=None) -> None:
+        """
+        Initializes a ParentNode object with the given children, tag, value, and props.
+
+        Args:
+            children (list): A list of child nodes.
+            tag (str): The tag of the ParentNode.
+            value (str, optional): The value of the ParentNode. Defaults to None.
+            props (dict, optional): A dictionary of properties for the ParentNode. Defaults to None.
+
+        Returns:
+            None
+        """
         super().__init__(tag, value, children, props)
 
     def to_html(self):
@@ -37,6 +49,18 @@ class ParentNode(HTMLNode):
 
 class LeafNode(HTMLNode):
     def __init__(self, value, tag=None, children=None, props=None) -> None:
+        """
+        Initializes a LeafNode object with the given value, tag, children, and props.
+
+        Args:
+            value (Any): The value of the LeafNode.
+            tag (str, optional): The tag of the LeafNode. Defaults to None.
+            children (list, optional): A list of child nodes. Defaults to None.
+            props (dict, optional): A dictionary of properties for the LeafNode. Defaults to None.
+
+        Returns:
+            None
+        """
         super().__init__(tag, value, children, props)
 
     def to_html(self):

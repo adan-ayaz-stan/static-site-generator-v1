@@ -1,6 +1,6 @@
 import unittest
 
-from src.functions import text_to_textnodes
+from src.functions import markdown_to_blocks, markdown_to_html_node, text_to_textnodes
 from src.textnode import TextNode
 
 text_type_text = "text"
@@ -31,3 +31,26 @@ class TextToTextNodesTestCase(unittest.TestCase):
         ]
 
         self.assertEqual(text_to_textnodes(text), expected_nodes)
+
+
+class MarkdownToBlockTestCase(unittest.TestCase):
+    def test_text_seq_1(self):
+        markdown = "# This is a heading\n\n This is a paragraph of text. It has some **bold** and *italic* words inside of it.\n\n* This is the first list item in a list block\n* This is a list item\n* This is another list item"
+
+        # Output should contain blocks seperated by \n\n
+        expected_blocks = [
+            "# This is a heading",
+            "This is a paragraph of text. It has some **bold** and *italic* words inside of it.",
+            "* This is the first list item in a list block\n* This is a list item\n* This is another list item",
+        ]
+        self.assertEqual(markdown_to_blocks(markdown), expected_blocks)
+
+
+class MarkdownToHTMLNodeTestCase(unittest.TestCase):
+    def test_text_seq_1(self):
+        markdown = "# This is a h1 tag\n\n This is a paragraph of text. It has some **bold** and *italic* words inside of it.\n\n* This is the first list item in a list block\n* This is a list item\n* This is another list item"
+
+        # Output should contain blocks seperated by \n\n
+        expected_html = "<div id='root'><h1>This is a h1 tag</h1><p>This is a paragraph of text. It has some <b>bold</b> and <i>italic</i> words inside of it.</p><ul><li>This is the first list item in a list block</li><li>This is a list item</li><li>This is another list item</li></ul></div>"
+
+        self.assertEqual(markdown_to_html_node(markdown), expected_html)

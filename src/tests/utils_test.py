@@ -2,6 +2,7 @@ import unittest
 
 from src.textnode import TextNode
 from src.utils import (
+    block_to_block_type,
     extract_markdown_images,
     extract_markdown_links,
     split_nodes_delimiter,
@@ -246,3 +247,49 @@ class UnitTestSplitNodesDelimiter(unittest.TestCase):
                 TextNode(" inbetween.", "text"),
             ],
         )
+
+
+class BlockToBlockTypeTest(unittest.TestCase):
+    def test_seq_h1(self):
+        block = "# This is a heading"
+        self.assertEqual(block_to_block_type(block), "h1")
+
+    def test_seq_h2(self):
+        block = "## This is a subheading"
+        self.assertEqual(block_to_block_type(block), "h2")
+
+    def test_seq_h3(self):
+        block = "### This is a subsubheading"
+        self.assertEqual(block_to_block_type(block), "h3")
+
+    def test_seq_h4(self):
+        block = "#### This is a subsubsubheading"
+        self.assertEqual(block_to_block_type(block), "h4")
+
+    def test_seq_h5(self):
+        block = "##### This is a subsubsubsubheading"
+        self.assertEqual(block_to_block_type(block), "h5")
+
+    def test_seq_h6(self):
+        block = "###### This is a subsubsubsubsubheading"
+        self.assertEqual(block_to_block_type(block), "h6")
+
+    def test_seq_ol(self):
+        block = "1. This is an ordered list\n2. This is a list item\n3. This is another list item"
+        self.assertEqual(block_to_block_type(block), "ol")
+
+    def test_seq_ul(self):
+        block = "- This is an unordered list\n- This is a list item\n- This is another list item"
+        self.assertEqual(block_to_block_type(block), "ul")
+
+    def test_seq_blockquote(self):
+        block = "> This is a blockquote"
+        self.assertEqual(block_to_block_type(block), "blockquote")
+
+    def test_seq_code(self):
+        block = "```\nThis is a code block\n```"
+        self.assertEqual(block_to_block_type(block), "code")
+
+    def test_seq_p(self):
+        block = "This is a paragraph"
+        self.assertEqual(block_to_block_type(block), "p")

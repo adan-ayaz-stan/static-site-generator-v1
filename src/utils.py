@@ -150,3 +150,42 @@ def split_nodes_link(old_nodes):
             tmp_nodes.append(TextNode(remaining_text_after_last_link, "text"))
 
     return tmp_nodes
+
+
+def block_to_block_type(block):
+
+    # Heading
+    split_string_h_check = block.split(" ", 1)
+    hash_chars = 0
+    for i in range(len(split_string_h_check[0])):
+        if split_string_h_check[0][i] == "#":
+            hash_chars += 1
+
+    if hash_chars == len(split_string_h_check[0]):
+        return f"h{hash_chars}"
+
+    # Ordered List
+    split_string_ol_check = block.split(".", 1)
+    if (
+        len(split_string_ol_check) == 2
+        and split_string_ol_check[0].isdigit()
+        and split_string_ol_check[1][0] == " "
+    ):
+        return "ol"
+
+    # Unordered list block
+    if block[0] == "*" or block[0] == "-":
+        return "ul"
+
+    # Blockqoute Block
+    if block[:1] == ">":
+        return "blockquote"
+
+    # Code Block
+    if (block[:3] == "```" and block[-3:] == "```") or (
+        block[:3] == "~~~" and block[-3:] == "~~~"
+    ):
+        return "code"
+
+    # Normal Paragraph
+    return "p"

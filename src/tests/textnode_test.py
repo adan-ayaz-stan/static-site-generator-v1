@@ -24,18 +24,18 @@ class TestTextNode(unittest.TestCase):
             node_1.__repr__(), "TextNode(Hello World, code, https://www.google.com)"
         )
 
-    def test_text_node_to_html_text(self):
+    def test_to_html_text(self):
         node_text = TextNode("Hello World", "text")
-        self.assertEqual(node_text.text_node_to_html().to_html(), "Hello World")
+        self.assertEqual(node_text.to_html(), "Hello World")
 
-    def test_text_node_to_html_bold(self):
+    def test_to_html_bold(self):
         node_bold = TextNode("Bold Text", "bold")
-        self.assertEqual(node_bold.text_node_to_html().to_html(), "<b>Bold Text</b>")
+        self.assertEqual(node_bold.to_html(), "<b>Bold Text</b>")
 
-    def test_text_node_to_html_link(self):
+    def test_to_html_link(self):
         node_link = TextNode("Click here", "link", "https://www.example.com")
         self.assertEqual(
-            node_link.text_node_to_html().to_html(),
+            node_link.to_html(),
             "<a href='https://www.example.com'>Click here</a>",
         )
 
@@ -46,18 +46,18 @@ class TestTextNode(unittest.TestCase):
     def test_link_node_with_none_url(self):
         node_link = TextNode("Click here", "link", None)
         self.assertEqual(
-            node_link.text_node_to_html().to_html(), "<a href='#'>Click here</a>"
+            node_link.to_html(), "<a href='#'>Click here</a>"
         )
 
     def test_image_node_with_none_url(self):
         node_image = TextNode("Image", "image", None)
         self.assertEqual(
-            node_image.text_node_to_html().to_html(), "<img alt='Image' />"
+            node_image.to_html(), "<img alt='Image' />"
         )
 
     def test_empty_text(self):
         node_text = TextNode("", "text")
-        self.assertEqual(node_text.text_node_to_html().to_html(), "")
+        self.assertEqual(node_text.to_html(), "")
 
 
 if __name__ == "__main__":
